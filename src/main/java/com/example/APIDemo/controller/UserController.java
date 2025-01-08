@@ -3,9 +3,12 @@ package com.example.APIDemo.controller;
 import com.example.APIDemo.dto.User;
 import com.example.APIDemo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -22,12 +25,22 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
-        return ResponseEntity.ok(userRepository.getUser(id));
+        try {
+            return ResponseEntity.ok(userRepository.getUser(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 
     @GetMapping
-    public ResponseEntity<User> getUserByEID(@RequestParam("eid") String eid) {
-        return ResponseEntity.ok(userRepository.getUser(eid));
+    public ResponseEntity<?> getUserByEID(@RequestParam("eid") String eid) {
+        try {
+            return ResponseEntity.ok(userRepository.getUser(eid));
+        } catch (Exception e) {
+            InputStream in = getClass().getResourceAsStream("/418.jpeg");
+            return ResponseEntity.status(418).contentType(MediaType.IMAGE_JPEG).body(new InputStreamResource(in));
+        }
     }
 
     @PostMapping
