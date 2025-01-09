@@ -12,13 +12,13 @@ import java.io.InputStream;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.getUsers());
     }
@@ -48,9 +48,9 @@ public class UserController {
         return ResponseEntity.ok(userRepository.addUser(user));
     }
 
-    @PutMapping
-    public ResponseEntity<User> editUser(@RequestBody User user) {
-        if (userRepository.getUsers().stream().anyMatch(user1 -> user1.getId() == user.getId())) {
+    @PutMapping("/{id}")
+    public ResponseEntity<User> editUser(@PathVariable("id") int id, @RequestBody User user) {
+        if (userRepository.getUsers().stream().anyMatch(user1 -> user1.getId() == id)) {
             return ResponseEntity.ok(userRepository.modify(user));
         }
         return ResponseEntity.notFound().build();
